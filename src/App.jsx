@@ -409,52 +409,72 @@ const App = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-stone-900 text-stone-100 p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Crust File Browser</h1>
+{/* Update the main App return statement */}
+
+return (
+  <div className="min-h-screen bg-stone-900 text-stone-100">
+    {/* Sticky header */}
+    <div className="fixed top-0 left-0 right-0 z-50 bg-stone-900/95 backdrop-blur-sm border-b border-stone-800 shadow-lg">
+      <div className="max-w-4xl mx-auto p-4">
+        <h1 className="text-2xl font-bold mb-4 text-center">Crust File Browser</h1>
         
         <form onSubmit={handleSubmit} className="mb-2">
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
             <input
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="Enter Crust Network address"
-              className="flex-1 px-4 py-2 rounded-lg bg-stone-800 border border-stone-700 
-                         focus:outline-none focus:border-stone-500"
+              className="w-full sm:w-3/4 px-4 py-2 rounded-lg bg-stone-800 border border-stone-700 
+                        focus:outline-none focus:border-stone-500"
             />
             <button
               type="submit"
               disabled={loading && page === 0}
-              className="px-6 py-2 bg-stone-700 rounded-lg hover:bg-stone-600 
-                       transition-colors duration-200 disabled:opacity-50"
+              className="w-full sm:w-auto px-6 py-2 bg-stone-700 rounded-lg hover:bg-stone-600
+                        transition-colors duration-200 disabled:opacity-50 whitespace-nowrap"
             >
               {loading && page === 0 ? 'Loading...' : 'Fetch Files'}
             </button>
           </div>
         </form>
 
-        <AddressHistory 
-          onSelect={(addr) => {
-            setAddress(addr);
-            handleSubmit({ preventDefault: () => {} });
-          }} 
-        />
+        <div className="flex justify-between items-center text-sm">
+          <AddressHistory 
+            onSelect={(addr) => {
+              setAddress(addr);
+              handleSubmit({ preventDefault: () => {} });
+            }}
+          />
+          
+          {totalCount > 0 && (
+            <div className="text-stone-400">
+              Found {totalCount.toLocaleString()} files. Showing {files.length.toLocaleString()} so far.
+            </div>
+          )}
+        </div>
 
         {error && (
-          <Alert className="mb-4 bg-red-900/20 text-red-400 border border-red-900">
+          <Alert className="mt-4 bg-red-900/20 text-red-400 border border-red-900">
             {error}
           </Alert>
         )}
+      </div>
+    </div>
 
-        {totalCount > 0 && (
-          <div className="text-stone-400 mb-4">
-            Found {totalCount.toLocaleString()} files. Showing {files.length.toLocaleString()} so far.
-          </div>
-        )}
+    {/* Main content - adjusted to account for fixed header */}
+    <div className="pt-48"> {/* Adjust this value based on your header height */}
+      {/* Loading indicator */}
+      {loading && (
+        <div className="fixed bottom-4 right-4 bg-stone-800 rounded-lg p-3 shadow-lg flex items-center gap-3">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-stone-400"></div>
+          <span className="text-stone-400 text-sm">Loading more files...</span>
+        </div>
+      )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {/* Grid container - now full width */}
+      <div className="px-4 pb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
           {files.map((file, index) => (
             <div
               key={`${file.cid}-${file.block_timestamp}-${index}`}
@@ -464,12 +484,6 @@ const App = () => {
             </div>
           ))}
         </div>
-
-        {loading && (
-          <div className="text-center mt-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-stone-400 mx-auto"></div>
-          </div>
-        )}
 
         {!loading && files.length === 0 && (
           <div className="text-center text-stone-400 mt-8">
@@ -484,7 +498,8 @@ const App = () => {
         )}
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default App;
