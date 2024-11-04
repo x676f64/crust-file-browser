@@ -391,7 +391,7 @@ const App = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {files.map((file, index) => (
             <div
-              key={file.cid}
+              key={`${file.cid}-${file.block_timestamp}-${index}`}
               ref={index === files.length - 1 ? lastFileElementRef : null}
             >
               <FileCard file={file} />
